@@ -1,0 +1,36 @@
+# Valkyrie Game Aggregator Configuration
+# Docs: https://github.com/valkyrie-game-aggregator/valkyrie
+
+server:
+  host: "0.0.0.0"
+  port: 8090
+  mode: release
+
+# PAM (Player Account Management) integration
+pam:
+  url: "http://pam:8080"
+  api_token: "${PAM_API_TOKEN}"
+  timeout: 10s
+
+# Game providers
+providers:
+  - name: slotopol
+    type: slotopol
+    enabled: true
+    url: "http://slotopol:8100"
+    api_key: "${SLOTOPOL_API_KEY}"
+
+# Session configuration
+session:
+  ttl: 12h
+  secret: "${JWT_SECRET}"
+
+# Wallet configuration
+wallet:
+  currency: USD
+  min_deposit: 1.00
+  max_deposit: 10000.00
+
+logging:
+  level: info
+  format: json

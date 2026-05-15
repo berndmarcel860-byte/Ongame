@@ -1,0 +1,135 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ongame
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: slotopol
+      MYSQL_USER: slotopol
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-slotopol}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./webphp/database/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pam:
+    build:
+      context: ./pam
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/ongame?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      PAM_API_TOKEN: ${PAM_API_TOKEN:-change-me-pam-token}
+      PORT: "8080"
+      MIGRATIONS_DIR: /migrations
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  valkyrie:
+    image: ghcr.io/valkyrie-game-aggregator/valkyrie:latest
+    restart: unless-stopped
+    volumes:
+      - ./valkyrie/config.yaml:/etc/valkyrie/config.yaml:ro
+    environment:
+      VALKYRIE_CONFIG: /etc/valkyrie/config.yaml
+    ports:
+      - "8090:8090"
+    depends_on:
+      pam:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8090/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  slotopol:
+    image: ghcr.io/slotopol/server:latest
+    restart: unless-stopped
+    volumes:
+      - ./slotopol/config.yaml:/etc/slotopol/config.yaml:ro
+    environment:
+      SLOTOPOL_CONFIG: /etc/slotopol/config.yaml
+    ports:
+      - "8100:8100"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8100/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  webphp:
+    build:
+      context: ./webphp
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      WEB_DB_HOST: mysql
+      WEB_DB_PORT: 3306
+      WEB_DB_USER: ongame_web
+      WEB_DB_PASSWORD: ongame_web_pass
+      WEB_DB_NAME: ongame_web
+    ports:
+      - "8081:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+  mysql_data:

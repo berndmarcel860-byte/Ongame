@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ongame Admin Dashboard</title>
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #0a0f22; color: #eff4ff; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    .panel { background: #121a3a; border: 1px solid #2b3970; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 10px; margin-top: 12px; }
+    .card { background: #0d1430; border: 1px solid #25366d; border-radius: 10px; padding: 12px; }
+    input, button { border-radius: 8px; border: 1px solid #34447a; background: #0d1430; color: #f1f5ff; padding: 10px; }
+    button { cursor: pointer; background: #2563eb; border-color: #2563eb; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #2a3566; text-align: left; padding: 8px; }
+    a { color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Ongame Admin Dashboard</h1>
+    <p><a href="/">← Back to landing</a></p>
+
+    <div class="panel">
+      <strong>Admin JWT</strong>
+      <p><input id="token" placeholder="Paste JWT token" style="width: 100%;" /></p>
+      <p>
+        <button onclick="loadStats()">Load Demo Win Rate</button>
+        <button onclick="loadUsers()">Load Users</button>
+      </p>
+      <div class="cards">
+        <div class="card">Players: <strong id="players">-</strong></div>
+        <div class="card">Bet Rounds: <strong id="bets">-</strong></div>
+        <div class="card">Win Rounds: <strong id="wins">-</strong></div>
+        <div class="card">Win Rate %: <strong id="rate">-</strong></div>
+        <div class="card">Payout %: <strong id="payout">-</strong></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <strong>Recent Users</strong>
+      <table>
+        <thead><tr><th>Email</th><th>Username</th><th>Status</th></tr></thead>
+        <tbody id="users"><tr><td colspan="3">No data yet.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function adminApi(path) {
+      const res = await fetch(path, { headers: { Authorization: `Bearer ${token.value}` } });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw body;
+      return body;
+    }
+
+    async function loadStats() {
+      try {
+        const data = await adminApi('/admin/stats/demo-win-rate');
+        players.textContent = data.totalPlayers;
+        bets.textContent = data.betRounds;
+        wins.textContent = data.winRounds;
+        rate.textContent = Number(data.winRatePercent).toFixed(2);
+        payout.textContent = Number(data.payoutPercent).toFixed(2);
+      } catch (err) {
+        alert(JSON.stringify(err));
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const data = await adminApi('/admin/users?limit=20&offset=0');
+        if (!data.users || !data.users.length) {
+          users.innerHTML = '<tr><td colspan="3">No users found.</td></tr>';
+          return;
+        }
+        users.innerHTML = data.users.map(u => `
+          <tr>
+            <td>${u.email}</td>
+            <td>${u.username}</td>
+            <td>${u.isBanned ? 'BANNED' : (u.isActive ? 'ACTIVE' : 'INACTIVE')}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        alert(JSON.stringify(err));
+      }
+    }
+  </script>
+</body>
+</html>

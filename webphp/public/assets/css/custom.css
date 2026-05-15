@@ -1,0 +1,34 @@
+:root {
+  --bg-dark: #0f172a;
+  --bg-panel: #111827;
+  --text-soft: #b9c3dd;
+  --accent: #4f46e5;
+}
+body {
+  background: radial-gradient(circle at top, #1e293b 0%, #0b1224 45%, #070c18 100%);
+  color: #f8fafc;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+.navbar, .card.glass {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(8px);
+}
+.text-soft { color: var(--text-soft); }
+.hero-title { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 800; }
+.btn-brand {
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  border: none;
+}
+.metric {
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  padding: 1rem;
+}
+.metric h3 { margin: 0; font-size: 1.8rem; }
+.table-dark {
+  --bs-table-bg: transparent;
+  --bs-table-color: #e2e8f0;
+}
