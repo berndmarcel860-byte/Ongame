@@ -122,8 +122,8 @@ GET  /admin/stats/demo-win-rate
 
 `GET /admin/stats/demo-win-rate` returns demo analytics:
 - total players
-- bet rounds (`WITHDRAW` count)
-- win rounds (`DEPOSIT` count)
+- bet rounds (`WITHDRAW` count from game provider callbacks)
+- win rounds (`DEPOSIT` count from game provider callbacks)
 - win rate percentage
 - payout percentage
 

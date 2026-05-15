@@ -214,8 +214,8 @@ func (s *BalanceService) GetAdminDemoWinRate(ctx context.Context) (*models.Admin
 		return nil, fmt.Errorf("count users: %w", err)
 	}
 
-	var betAmount float64
-	var winAmount float64
+	var totalBetAmount float64
+	var totalWinAmount float64
 	err := s.db.DB.QueryRowContext(ctx, `
 SELECT
 	COALESCE(SUM(CASE WHEN type = 'WITHDRAW' THEN 1 ELSE 0 END), 0) AS bet_rounds,
@@ -224,7 +224,7 @@ SELECT
 	COALESCE(SUM(CASE WHEN type = 'DEPOSIT' THEN amount ELSE 0 END), 0) AS win_amount
 FROM transactions
 WHERE status = $1`, models.TxStatusCompleted,
-	).Scan(&stats.BetRounds, &stats.WinRounds, &betAmount, &winAmount)
+	).Scan(&stats.BetRounds, &stats.WinRounds, &totalBetAmount, &totalWinAmount)
 	if err != nil {
 		return nil, fmt.Errorf("query demo stats: %w", err)
 	}
@@ -232,8 +232,8 @@ WHERE status = $1`, models.TxStatusCompleted,
 	if stats.BetRounds > 0 {
 		stats.WinRatePercent = (float64(stats.WinRounds) / float64(stats.BetRounds)) * 100
 	}
-	if betAmount > 0 {
-		stats.PayoutPercent = (winAmount / betAmount) * 100
+	if totalBetAmount > 0 {
+		stats.PayoutPercent = (totalWinAmount / totalBetAmount) * 100
 	}
 
 	return &stats, nil
