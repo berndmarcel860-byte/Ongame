@@ -1,0 +1,27 @@
+version: "3.9"
+
+# Development overrides: expose all ports, use hot-reload where possible, verbose logging.
+
+services:
+  pam:
+    build:
+      context: ./pam
+      dockerfile: Dockerfile
+      target: builder
+    command: go run ./cmd/server
+    volumes:
+      - ./pam:/app
+    environment:
+      GIN_MODE: debug
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  mysql:
+    ports:
+      - "3306:3306"
