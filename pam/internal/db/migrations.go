@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -37,9 +36,7 @@ func RunMigrations(db *sql.DB, migrationsDir string) error {
 		if applied {
 			continue
 		}
-		path := filepath.Join(migrationsDir, name)
 		content, err := fs.ReadFile(os.DirFS(migrationsDir), name)
-		_ = path
 		if err != nil {
 			return fmt.Errorf("read migration %s: %w", name, err)
 		}

@@ -1,14 +1,14 @@
 package service
 
 import (
-"context"
-"database/sql"
-"errors"
-"fmt"
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
 
-"github.com/berndmarcel860-byte/ongame/pam/internal/db"
-"github.com/berndmarcel860-byte/ongame/pam/internal/models"
-"github.com/google/uuid"
+	"github.com/berndmarcel860-byte/ongame/pam/internal/db"
+	"github.com/berndmarcel860-byte/ongame/pam/internal/models"
+	"github.com/google/uuid"
 )
 
 var (

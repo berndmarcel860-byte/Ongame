@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/berndmarcel860-byte/ongame/pam/internal/auth"
@@ -188,19 +189,5 @@ func sessionKey(token string) string {
 
 // isUniqueViolation checks if a pq error is a unique constraint violation for the given constraint.
 func isUniqueViolation(err error, constraint string) bool {
-	return err != nil && (fmt.Sprintf("%v", err) == fmt.Sprintf("ERROR: duplicate key value violates unique constraint \"%s\" (SQLSTATE 23505)", constraint) ||
-		containsStr(err.Error(), constraint))
-}
-
-func containsStr(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsSubstring(s, substr))
-}
-
-func containsSubstring(s, sub string) bool {
-	for i := 0; i <= len(s)-len(sub); i++ {
-		if s[i:i+len(sub)] == sub {
-			return true
-		}
-	}
-	return false
+	return err != nil && strings.Contains(err.Error(), constraint)
 }
