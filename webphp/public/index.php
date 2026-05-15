@@ -108,7 +108,7 @@
         <ul class="text-soft mb-0">
           <li>2 built-in UI templates</li>
           <li>Customizable color themes</li>
-          <li>22 pre-installed languages (with the option to add more)</li>
+          <li>22 pre-installed languages (with the option to add more; see product documentation for full list)</li>
           <li>Proprietary provably fair technology</li>
           <li>Multi-currency player accounts</li>
           <li>Multi-tier affiliate program</li>
@@ -136,7 +136,6 @@
         </ul>
       </div>
     </div>
-    <p class="text-soft mt-3 mb-0">Help us improve our iGaming software by completing the following questionnaire.</p>
   </div>
 
   <div class="card glass p-4 rounded-4 mb-4">
@@ -154,7 +153,7 @@
       <li>Manage menus and static pages</li>
       <li>Manage game limits, return to player and house edge (where applicable)</li>
       <li>Automated platform upgrades and add-on installations</li>
-      <li>Fine-grained access control allows the global administrator to restrict access to specific pages for other admin users.</li>
+      <li>Fine-grained access control for admin users</li>
     </ul>
   </div>
 
