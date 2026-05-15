@@ -1,6 +1,6 @@
 # Ongame — Online Gambling Platform
 
-A full-stack online gambling platform built with Go, PostgreSQL, Redis, and Docker Compose.
+A full-stack online gambling platform built with Go, PHP, MySQL, PostgreSQL, Redis, and Docker Compose.
 
 ## Architecture
 
@@ -22,14 +22,15 @@ A full-stack online gambling platform built with Go, PostgreSQL, Redis, and Dock
   └─────────┘
 ```
 
-| Service    | Description                                          | Port  |
-|------------|------------------------------------------------------|-------|
-| PAM        | Player Account Management — custom Go service        | 8080  |
-| Valkyrie   | Open-source game aggregator (lobby + session proxy)  | 8090  |
-| Slotopol   | Slot games server                                    | 8100  |
-| PostgreSQL | Primary datastore for PAM                            | 5432  |
-| Redis      | Session cache / idempotency                          | 6379  |
-| MySQL      | Slotopol datastore                                   | 3306  |
+| Service    | Description                                            | Port  |
+|------------|--------------------------------------------------------|-------|
+| PAM        | Player Account Management — custom Go service          | 8080  |
+| WebPHP     | Landing page + user frontend + admin backend (PHP)     | 8081  |
+| Valkyrie   | Open-source game aggregator (lobby + session proxy)    | 8090  |
+| Slotopol   | Slot games server                                      | 8100  |
+| PostgreSQL | Primary datastore for PAM                              | 5432  |
+| Redis      | Session cache / idempotency                            | 6379  |
+| MySQL      | Slotopol + WebPHP datastore                            | 3306  |
 
 ## Quick Start
 
@@ -55,9 +56,14 @@ curl http://localhost:8080/health
 ```
 
 ### 4. Open web UIs
-- Landing page: `http://localhost:8080/`
-- Player frontend demo: `http://localhost:8080/app`
-- Admin dashboard demo: `http://localhost:8080/admin-dashboard`
+- PHP landing page: `http://localhost:8081/`
+- PHP player frontend: `http://localhost:8081/app.php`
+- PHP admin backend: `http://localhost:8081/admin.php`
+- Existing PAM embedded UI (Go): `http://localhost:8080/`
+
+### 5. Demo login accounts (WebPHP)
+- Admin: `admin@ongame.local` / `Admin@123`
+- Seeded player: `player@ongame.local` / `Player@123`
 
 ## Environment Variables
 
@@ -137,6 +143,11 @@ go run ./cmd/server
 # Or use dev compose (mounts source for live reload)
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
+
+### WebPHP stack
+- PHP app source: `webphp/public/`
+- AJAX API: `webphp/public/api/`
+- MySQL init SQL: `webphp/database/init/20_ongame_web.sql`
 
 ## Database Schema
 
