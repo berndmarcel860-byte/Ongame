@@ -223,3 +223,12 @@ func (r *Router) handleAdminBanUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "banned"})
 }
+
+func (r *Router) handleAdminDemoWinRate(c *gin.Context) {
+	stats, err := r.balanceSvc.GetAdminDemoWinRate(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load admin stats"})
+		return
+	}
+	c.JSON(http.StatusOK, stats)
+}

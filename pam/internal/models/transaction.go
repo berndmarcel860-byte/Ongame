@@ -48,3 +48,11 @@ type TransactionResponse struct {
 	Locked        float64 `json:"locked"`
 	Currency      string  `json:"currency"`
 }
+
+type AdminDemoWinRateResponse struct {
+	TotalPlayers   int64   `json:"totalPlayers"`
+	BetRounds      int64   `json:"betRounds"`
+	WinRounds      int64   `json:"winRounds"`
+	WinRatePercent float64 `json:"winRatePercent"`
+	PayoutPercent  float64 `json:"payoutPercent"`
+}

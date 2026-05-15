@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ongame Player App</title>
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #0b1022; color: #f1f5ff; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 24px; }
+    .panel { background: #121935; border: 1px solid #2a3566; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+    h1, h2 { margin-top: 0; }
+    input, button { border-radius: 8px; border: 1px solid #34447a; background: #0d1430; color: #f1f5ff; padding: 10px; }
+    button { cursor: pointer; background: #2563eb; border-color: #2563eb; font-weight: 600; }
+    .row { display: grid; grid-template-columns: repeat(auto-fit,minmax(170px,1fr)); gap: 10px; }
+    pre { background: #060a1a; border: 1px solid #23325f; border-radius: 8px; padding: 12px; overflow: auto; }
+    a { color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Ongame Player Frontend</h1>
+    <p><a href="/">← Back to landing</a></p>
+
+    <div class="panel">
+      <h2>Register</h2>
+      <div class="row">
+        <input id="regEmail" placeholder="email" value="player1@example.com" />
+        <input id="regUsername" placeholder="username" value="player1" />
+        <input id="regPassword" placeholder="password" value="PlayerPass123" type="password" />
+        <input id="regCurrency" placeholder="currency" value="USD" />
+      </div>
+      <p><button onclick="registerUser()">Create account</button></p>
+    </div>
+
+    <div class="panel">
+      <h2>Login</h2>
+      <div class="row">
+        <input id="loginEmail" placeholder="email" value="player1@example.com" />
+        <input id="loginPassword" placeholder="password" value="PlayerPass123" type="password" />
+      </div>
+      <p><button onclick="loginUser()">Login</button></p>
+    </div>
+
+    <div class="panel">
+      <h2>Session</h2>
+      <div class="row">
+        <input id="token" placeholder="JWT token appears here" />
+      </div>
+      <p>
+        <button onclick="getMe()">Get Profile</button>
+        <button onclick="getMyTransactions()">Get Transactions</button>
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2>Output</h2>
+      <pre id="out">Ready.</pre>
+    </div>
+  </div>
+
+  <script>
+    const out = document.getElementById('out');
+    const setOut = (v) => out.textContent = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
+
+    async function api(path, options = {}) {
+      const res = await fetch(path, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options,
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw { status: res.status, body };
+      return body;
+    }
+
+    async function registerUser() {
+      try {
+        const body = await api('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: regEmail.value,
+            username: regUsername.value,
+            password: regPassword.value,
+            currency: regCurrency.value,
+          }),
+        });
+        setOut(body);
+      } catch (err) { setOut(err); }
+    }
+
+    async function loginUser() {
+      try {
+        const body = await api('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email: loginEmail.value, password: loginPassword.value }),
+        });
+        token.value = body.token;
+        setOut(body);
+      } catch (err) { setOut(err); }
+    }
+
+    async function getMe() {
+      try {
+        setOut(await api('/users/me', { headers: { Authorization: `Bearer ${token.value}` } }));
+      } catch (err) { setOut(err); }
+    }
+
+    async function getMyTransactions() {
+      try {
+        setOut(await api('/users/me/transactions?limit=20&offset=0', {
+          headers: { Authorization: `Bearer ${token.value}` },
+        }));
+      } catch (err) { setOut(err); }
+    }
+  </script>
+</body>
+</html>

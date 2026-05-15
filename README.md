@@ -54,6 +54,11 @@ docker compose up --build -d
 curl http://localhost:8080/health
 ```
 
+### 4. Open web UIs
+- Landing page: `http://localhost:8080/`
+- Player frontend demo: `http://localhost:8080/app`
+- Admin dashboard demo: `http://localhost:8080/admin-dashboard`
+
 ## Environment Variables
 
 | Variable            | Default                     | Description                        |
@@ -112,7 +117,15 @@ GET  /admin/users
 GET  /admin/users/{userId}
 PUT  /admin/users/{userId}/balance   { amount, reason }
 POST /admin/users/{userId}/ban       { reason }
+GET  /admin/stats/demo-win-rate
 ```
+
+`GET /admin/stats/demo-win-rate` returns demo analytics:
+- total players
+- bet rounds (`WITHDRAW` count)
+- win rounds (`DEPOSIT` count)
+- win rate percentage
+- payout percentage
 
 ## Development
 

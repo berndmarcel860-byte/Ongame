@@ -39,6 +39,8 @@ func NewRouter(cfg RouterConfig) *gin.Engine {
 func (r *Router) registerRoutes(cfg RouterConfig) {
 	e := r.engine
 
+	r.registerUIRoutes(e)
+
 	// Public auth routes
 	authGroup := e.Group("/auth")
 	{
@@ -69,6 +71,7 @@ func (r *Router) registerRoutes(cfg RouterConfig) {
 		adminGroup.GET("/users/:userId", r.handleAdminGetUser)
 		adminGroup.PUT("/users/:userId/balance", r.handleAdminAdjustBalance)
 		adminGroup.POST("/users/:userId/ban", r.handleAdminBanUser)
+		adminGroup.GET("/stats/demo-win-rate", r.handleAdminDemoWinRate)
 	}
 
 	// Health check

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ongame</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #080b1a; color: #ecf0ff; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px; }
+    .badge { display: inline-block; background: #3b82f6; color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 12px; }
+    h1 { font-size: 44px; margin: 18px 0 14px; }
+    p { color: #b8c1e0; line-height: 1.6; }
+    .actions { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+    a.btn { text-decoration: none; color: #fff; padding: 12px 18px; border-radius: 10px; font-weight: 600; }
+    a.primary { background: #2563eb; }
+    a.secondary { background: #1f2937; border: 1px solid #334155; }
+    .grid { margin-top: 42px; display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 14px; }
+    .card { background: #10162e; border: 1px solid #253258; border-radius: 12px; padding: 16px; }
+    .card strong { display: block; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">ONGAME PLATFORM</span>
+    <h1>Professional iGaming frontend + admin experience</h1>
+    <p>
+      This demo provides a production-style landing page, player application UI, and admin dashboard.
+      Core game and wallet transactions are powered by PAM APIs, with PostgreSQL for PAM data and MySQL in the
+      platform stack for slot services.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="/app">Open Player App</a>
+      <a class="btn secondary" href="/admin-dashboard">Open Admin Dashboard</a>
+      <a class="btn secondary" href="/health">Health API</a>
+    </div>
+
+    <div class="grid">
+      <div class="card"><strong>Landing Page</strong>Stake-style polished entry with CTAs and product overview.</div>
+      <div class="card"><strong>User Frontend</strong>Register, login, profile, and transaction history from PAM backend.</div>
+      <div class="card"><strong>Admin Backend</strong>User operations plus demo win-rate % analytics endpoint.</div>
+      <div class="card"><strong>Database Stack</strong>PostgreSQL + Redis for PAM and MySQL for slot server layer.</div>
+    </div>
+  </div>
+</body>
+</html>

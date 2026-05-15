@@ -207,3 +207,34 @@ func nullableStr(s string) interface{} {
 	}
 	return s
 }
+
+func (s *BalanceService) GetAdminDemoWinRate(ctx context.Context) (*models.AdminDemoWinRateResponse, error) {
+	var stats models.AdminDemoWinRateResponse
+	if err := s.db.DB.QueryRowContext(ctx, `SELECT COUNT(*) FROM users`).Scan(&stats.TotalPlayers); err != nil {
+		return nil, fmt.Errorf("count users: %w", err)
+	}
+
+	var betAmount float64
+	var winAmount float64
+	err := s.db.DB.QueryRowContext(ctx, `
+SELECT
+	COALESCE(SUM(CASE WHEN type = 'WITHDRAW' THEN 1 ELSE 0 END), 0) AS bet_rounds,
+	COALESCE(SUM(CASE WHEN type = 'DEPOSIT' THEN 1 ELSE 0 END), 0) AS win_rounds,
+	COALESCE(SUM(CASE WHEN type = 'WITHDRAW' THEN amount ELSE 0 END), 0) AS bet_amount,
+	COALESCE(SUM(CASE WHEN type = 'DEPOSIT' THEN amount ELSE 0 END), 0) AS win_amount
+FROM transactions
+WHERE status = $1`, models.TxStatusCompleted,
+	).Scan(&stats.BetRounds, &stats.WinRounds, &betAmount, &winAmount)
+	if err != nil {
+		return nil, fmt.Errorf("query demo stats: %w", err)
+	}
+
+	if stats.BetRounds > 0 {
+		stats.WinRatePercent = (float64(stats.WinRounds) / float64(stats.BetRounds)) * 100
+	}
+	if betAmount > 0 {
+		stats.PayoutPercent = (winAmount / betAmount) * 100
+	}
+
+	return &stats, nil
+}
