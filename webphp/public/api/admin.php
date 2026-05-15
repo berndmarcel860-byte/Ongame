@@ -44,4 +44,45 @@ if ($action === 'stats') {
     ]);
 }
 
+if ($action === 'add-funds') {
+    $payload = read_json_input();
+    $userId = (int)($payload['userId'] ?? 0);
+    $amount = (float)($payload['amount'] ?? 0);
+
+    if ($userId <= 0 || $amount <= 0) {
+        json_response(['error' => 'valid userId and amount are required'], 422);
+    }
+
+    $conn->begin_transaction();
+    try {
+        $lock = $conn->prepare('SELECT balance FROM users WHERE id = ? FOR UPDATE');
+        $lock->bind_param('i', $userId);
+        $lock->execute();
+        $row = $lock->get_result()->fetch_assoc();
+        if (!$row) {
+            $conn->rollback();
+            json_response(['error' => 'user not found'], 404);
+        }
+
+        $balance = (float)($row['balance'] ?? 0);
+        $newBalance = $balance + $amount;
+
+        $upd = $conn->prepare('UPDATE users SET balance = ? WHERE id = ?');
+        $upd->bind_param('di', $newBalance, $userId);
+        $upd->execute();
+        $conn->commit();
+
+        json_response([
+            'status' => 'funds_added',
+            'userId' => $userId,
+            'amount' => $amount,
+            'newBalance' => $newBalance,
+        ]);
+    } catch (Throwable $e) {
+        $conn->rollback();
+        error_log('admin add-funds failed: ' . $e->getMessage());
+        json_response(['error' => 'failed to add funds'], 500);
+    }
+}
+
 json_response(['error' => 'unsupported action'], 400);

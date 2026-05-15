@@ -46,6 +46,29 @@
     </div>
   </div>
 
+  <div class="card glass p-4 rounded-4 mt-3">
+    <h5>Add Funds (Player Wallet)</h5>
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4"><label class="form-label">Amount</label><input id="addFundsAmount" type="number" class="form-control" value="100"></div>
+      <div class="col-md-4"><button class="btn btn-success w-100" id="btnAddFunds">Add Funds</button></div>
+      <div class="col-md-4 text-soft">Player can top up demo wallet instantly.</div>
+    </div>
+  </div>
+
+  <div class="card glass p-4 rounded-4 mt-3">
+    <h5>Game List</h5>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead><tr><th>Game</th><th>Provider</th><th>RTP</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Book of Gems</td><td>Slotopol</td><td>96.20%</td><td><span class="badge text-bg-success">Playable</span></td></tr>
+          <tr><td>Lucky Fruits Deluxe</td><td>Slotopol</td><td>95.80%</td><td><span class="badge text-bg-success">Playable</span></td></tr>
+          <tr><td>Neon Joker 7</td><td>Slotopol</td><td>96.05%</td><td><span class="badge text-bg-warning">Demo</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="row g-3 mt-1">
     <div class="col-lg-5">
       <div class="card glass p-4 rounded-4 h-100">
@@ -151,6 +174,15 @@
         refreshHistory();
       })
       .fail(xhr => setStatus(xhr.responseJSON?.error || 'Bet failed', true));
+  });
+
+  $('#btnAddFunds').on('click', function(){
+    api('/api/user.php?action=add-funds','POST',{ amount: Number($('#addFundsAmount').val()) })
+      .done(res => {
+        setStatus(`Funds added: +$${res.amount}`);
+        refreshProfile();
+      })
+      .fail(xhr => setStatus(xhr.responseJSON?.error || 'Add funds failed', true));
   });
 
   $('#btnRefresh').on('click', function(){

@@ -31,6 +31,23 @@
     <div class="col-md-3"><div class="metric"><small class="text-soft">House Edge %</small><h3 id="mEdge">-</h3></div></div>
   </div>
 
+  <div class="card glass p-4 rounded-4 mb-3">
+    <h5>Add Funds to User</h5>
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">User ID</label>
+        <input id="fundUserId" class="form-control" type="number" placeholder="e.g. 2">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Amount</label>
+        <input id="fundAmount" class="form-control" type="number" value="250">
+      </div>
+      <div class="col-md-4">
+        <button id="btnAdminAddFunds" class="btn btn-success w-100">Add Funds</button>
+      </div>
+    </div>
+  </div>
+
   <div class="card glass p-4 rounded-4">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h5 class="m-0">Users</h5>
@@ -114,6 +131,16 @@
 
   $('#btnRefreshAdmin').on('click', function(){
     $.when(loadStats(), loadUsers()).fail(xhr => setStatus(xhr.responseJSON?.error || 'Refresh failed', true));
+  });
+
+  $('#btnAdminAddFunds').on('click', function(){
+    api('/api/admin.php?action=add-funds', 'POST', {
+      userId: Number($('#fundUserId').val()),
+      amount: Number($('#fundAmount').val())
+    }).done(res => {
+      setStatus(`Added $${res.amount} to user #${res.userId}`);
+      loadUsers();
+    }).fail(xhr => setStatus(xhr.responseJSON?.error || 'Add funds failed', true));
   });
 </script>
 </body>

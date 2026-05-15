@@ -149,6 +149,15 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 - AJAX API: `webphp/public/api/`
 - MySQL init SQL: `webphp/database/init/20_ongame_web.sql`
 
+### WebPHP screenshots
+- Landing: `docs/screenshots/php/landing-professional.png`
+- User frontend: `docs/screenshots/php/user-frontend.png`
+- User add funds: `docs/screenshots/php/user-add-funds.png`
+- Game list: `docs/screenshots/php/game-list.png`
+- Gameplay: `docs/screenshots/php/gameplay.png`
+- Admin backend: `docs/screenshots/php/admin-backend.png`
+- Admin add funds: `docs/screenshots/php/admin-add-funds.png`
+
 ## Database Schema
 
 Migrations are applied automatically on startup from `pam/migrations/`.

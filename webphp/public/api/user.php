@@ -48,9 +48,8 @@ if ($action === 'place-bet') {
         $upd->bind_param('di', $newBalance, $user['id']);
         $upd->execute();
 
-        $_SESSION['user']['balance'] = $newBalance;
-
         $conn->commit();
+        $_SESSION['user']['balance'] = $newBalance;
         json_response([
             'status' => 'bet_placed',
             'isWin' => (bool)$isWin,
@@ -59,7 +58,42 @@ if ($action === 'place-bet') {
         ]);
     } catch (Throwable $e) {
         $conn->rollback();
+        error_log('user place-bet failed: ' . $e->getMessage());
         json_response(['error' => 'failed to place bet'], 500);
+    }
+}
+
+if ($action === 'add-funds') {
+    $payload = read_json_input();
+    $amount = (float)($payload['amount'] ?? 0);
+    if ($amount <= 0) {
+        json_response(['error' => 'amount must be greater than zero'], 422);
+    }
+
+    $conn->begin_transaction();
+    try {
+        $lock = $conn->prepare('SELECT balance FROM users WHERE id = ? FOR UPDATE');
+        $lock->bind_param('i', $user['id']);
+        $lock->execute();
+        $row = $lock->get_result()->fetch_assoc();
+        $balance = (float)($row['balance'] ?? 0);
+        $newBalance = $balance + $amount;
+
+        $upd = $conn->prepare('UPDATE users SET balance = ? WHERE id = ?');
+        $upd->bind_param('di', $newBalance, $user['id']);
+        $upd->execute();
+
+        $conn->commit();
+        $_SESSION['user']['balance'] = $newBalance;
+        json_response([
+            'status' => 'funds_added',
+            'balance' => $newBalance,
+            'amount' => $amount,
+        ]);
+    } catch (Throwable $e) {
+        $conn->rollback();
+        error_log('user add-funds failed: ' . $e->getMessage());
+        json_response(['error' => 'failed to add funds'], 500);
     }
 }
 
