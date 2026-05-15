@@ -7,14 +7,14 @@ import (
 )
 
 type Balance struct {
-	ID             uuid.UUID `json:"id" db:"id"`
-	UserID         uuid.UUID `json:"userId" db:"user_id"`
-	CashBalance    float64   `json:"cash" db:"cash_balance"`
-	BonusBalance   float64   `json:"bonus" db:"bonus_balance"`
-	LockedBalance  float64   `json:"locked" db:"locked_balance"`
-	Currency       string    `json:"currency" db:"currency"`
-	Version        int       `json:"-" db:"version"`
-	UpdatedAt      time.Time `json:"updatedAt" db:"updated_at"`
+	ID            uuid.UUID `json:"id" db:"id"`
+	UserID        uuid.UUID `json:"userId" db:"user_id"`
+	CashBalance   float64   `json:"cash" db:"cash_balance"`
+	BonusBalance  float64   `json:"bonus" db:"bonus_balance"`
+	LockedBalance float64   `json:"locked" db:"locked_balance"`
+	Currency      string    `json:"currency" db:"currency"`
+	Version       int       `json:"-" db:"version"`
+	UpdatedAt     time.Time `json:"updatedAt" db:"updated_at"`
 }
 
 // BalanceResponse is returned to Valkyrie PAM client.

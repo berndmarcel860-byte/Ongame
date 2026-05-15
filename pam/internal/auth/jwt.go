@@ -11,7 +11,7 @@ import (
 
 var (
 	ErrInvalidToken = errors.New("invalid token")
-	ErrExpiredToken  = errors.New("token has expired")
+	ErrExpiredToken = errors.New("token has expired")
 )
 
 type Claims struct {
