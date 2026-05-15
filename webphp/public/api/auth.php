@@ -21,7 +21,7 @@ if ($action === 'register') {
         json_response(['error' => 'email or username already exists'], 409);
     }
 
-    $hash = password_hash($password, PASSWORD_BCRYPT);
+    $hash = password_hash($password, PASSWORD_DEFAULT);
     $role = 'user';
     $balance = 1000.00;
     $ins = $conn->prepare('INSERT INTO users (email, username, password_hash, role, balance) VALUES (?, ?, ?, ?, ?)');

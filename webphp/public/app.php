@@ -74,6 +74,16 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+  }
+
   function setStatus(msg, isError=false){
     $('#status').text(msg).toggleClass('text-danger', isError).toggleClass('text-soft', !isError);
   }
@@ -102,8 +112,8 @@
         return;
       }
       $('#historyRows').html(rows.map(r => `<tr>
-          <td>${r.id}</td><td>$${r.bet_amount}</td><td>$${r.win_amount}</td>
-          <td>${r.is_win == 1 ? 'WIN' : 'LOSE'}</td><td>${r.created_at}</td>
+          <td>${escapeHtml(r.id)}</td><td>$${escapeHtml(r.bet_amount)}</td><td>$${escapeHtml(r.win_amount)}</td>
+          <td>${r.is_win == 1 ? 'WIN' : 'LOSE'}</td><td>${escapeHtml(r.created_at)}</td>
       </tr>`).join(''));
     });
   }

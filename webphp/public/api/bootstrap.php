@@ -16,9 +16,12 @@ function db(): mysqli {
 
     $host = getenv('WEB_DB_HOST') ?: 'mysql';
     $port = (int)(getenv('WEB_DB_PORT') ?: '3306');
-    $user = getenv('WEB_DB_USER') ?: 'ongame_web';
-    $pass = getenv('WEB_DB_PASSWORD') ?: 'ongame_web_pass';
-    $name = getenv('WEB_DB_NAME') ?: 'ongame_web';
+    $user = getenv('WEB_DB_USER') ?: '';
+    $pass = getenv('WEB_DB_PASSWORD') ?: '';
+    $name = getenv('WEB_DB_NAME') ?: '';
+    if ($user === '' || $pass === '' || $name === '') {
+        json_response(['error' => 'database environment is not configured'], 500);
+    }
 
     $conn = new mysqli($host, $user, $pass, $name, $port);
     if ($conn->connect_errno) {
@@ -46,7 +49,7 @@ function seed_demo_users_if_missing(mysqli $conn): void {
             continue;
         }
 
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $insert = $conn->prepare('INSERT INTO users (email, username, password_hash, role, balance) VALUES (?, ?, ?, ?, ?)');
         $insert->bind_param('ssssd', $email, $username, $passwordHash, $role, $balance);
         $insert->execute();

@@ -52,6 +52,16 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+  }
+
   function setStatus(msg, isError=false){
     $('#adminStatus').text(msg).toggleClass('text-danger', isError).toggleClass('text-soft', !isError);
   }
@@ -82,7 +92,7 @@
         return;
       }
       $('#adminUsers').html(rows.map(u => `<tr>
-        <td>${u.id}</td><td>${u.email}</td><td>${u.username}</td><td>${u.role}</td><td>$${u.balance}</td><td>${u.created_at}</td>
+        <td>${escapeHtml(u.id)}</td><td>${escapeHtml(u.email)}</td><td>${escapeHtml(u.username)}</td><td>${escapeHtml(u.role)}</td><td>$${escapeHtml(u.balance)}</td><td>${escapeHtml(u.created_at)}</td>
       </tr>`).join(''));
     });
   }

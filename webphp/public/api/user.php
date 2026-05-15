@@ -1,6 +1,9 @@
 <?php
 require __DIR__ . '/bootstrap.php';
 
+const WIN_PROBABILITY_PERCENT = 48;
+const PAYOUT_MULTIPLIER = 1.95;
+
 $user = require_auth();
 $action = $_GET['action'] ?? '';
 $conn = db();
@@ -33,8 +36,8 @@ if ($action === 'place-bet') {
             json_response(['error' => 'insufficient balance'], 422);
         }
 
-        $isWin = random_int(1, 100) <= 48 ? 1 : 0;
-        $winAmount = $isWin ? round($amount * 1.95, 2) : 0.00;
+        $isWin = random_int(1, 100) <= WIN_PROBABILITY_PERCENT ? 1 : 0;
+        $winAmount = $isWin ? round($amount * PAYOUT_MULTIPLIER, 2) : 0.00;
         $newBalance = $balance - $amount + $winAmount;
 
         $ins = $conn->prepare('INSERT INTO bets (user_id, bet_amount, win_amount, is_win) VALUES (?, ?, ?, ?)');
